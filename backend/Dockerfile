@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     libmariadb-dev \
     pkg-config \
     curl \
+    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 # Set workdir
@@ -27,8 +28,8 @@ RUN poetry config virtualenvs.create false \
 # Copy project files
 COPY . .
 
-# Make setup script executable
-RUN chmod +x setup.sh
+# Convert Windows line endings to Unix and make setup script executable
+RUN dos2unix setup.sh && chmod +x setup.sh
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
