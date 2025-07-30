@@ -71,3 +71,4 @@ PRODUCTION.md
 # Media files - Draft designs and test files
 backend/media/draft_designs/
 backend/media/step_files/ 
+backend/staticfiles/ 
