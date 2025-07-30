@@ -42,19 +42,17 @@ const ComponentRequirementsForm = ({ user, onNavigateToHistory }: ComponentRequi
   const { toast } = useToast();
 
   const materialOptions = [
-    "Aluminum 6061-T6",
-    "Aluminum 7075-T6",
-    "Stainless Steel 304",
-    "Stainless Steel 316L",
-    "Carbon Steel",
-    "Brass",
-    "Copper",
-    "Titanium",
-    "ABS Plastic",
-    "PLA Plastic",
-    "PETG Plastic",
-    "Nylon",
-    "Delrin/POM",
+    "HR SHEET IS 1079 D",
+    "HR SHEET IS 2062 E250",
+    "HR SHEET IS 2062 E350",
+    "CR SHEET IS 513",
+    "GI SHEET IS 277-275 GSM",
+    "GI SHEET IS 277-120 GSM",
+    "SS SHEET SS 304",
+    "SS SHEET SS 441",
+    "SS SHEET SS 430",
+    "MS Chequered Plate",
+    "SS Chequered Plate",
     "Other (specify in requirements)"
   ];
 
