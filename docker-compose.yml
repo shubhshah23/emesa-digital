@@ -1,0 +1,65 @@
+version: '3.9'
+
+services:
+  frontend:
+    build: ./frontend
+    # NO ports exposed - internal only
+    environment:
+      - VITE_API_URL=/api/
+    volumes:
+      - ./frontend/dist:/app/dist  # Bind mount instead of named volume
+    depends_on:
+      - backend
+    networks:
+      - emesa_net
+
+  backend:
+    build: ./backend
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+    networks:
+      - emesa_net
+    # No ports exposed; only accessible via nginx
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: emesa_db
+      MYSQL_USER: emesa_user
+      MYSQL_PASSWORD: 'Emesa@123'
+      MYSQL_ROOT_PASSWORD: '#Mysql@123'
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./backend/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro  # Auto-run init script
+    networks:
+      - emesa_net
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./backend/media:/app/media
+      - ./frontend/dist:/usr/share/nginx/html  # Bind mount instead of named volume
+    ports:
+      - "8080:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - emesa_net
+
+networks:
+  emesa_net:
+    driver: bridge
+
+volumes:
+  db_data:
+  # Removed emesa_frontend_dist volume - using bind mounts instead 
