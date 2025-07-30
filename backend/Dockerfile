@@ -27,16 +27,16 @@ RUN poetry config virtualenvs.create false \
 # Copy project files
 COPY . .
 
+# Make setup script executable
+RUN chmod +x setup.sh
+
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     DJANGO_SETTINGS_MODULE=backend.settings \
     POETRY_VIRTUALENVS_CREATE=false
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
-
 # Expose port
 EXPOSE 8000
 
-# Start Gunicorn
-CMD ["poetry", "run", "gunicorn", "backend.wsgi:application", "-b", "0.0.0.0:8000", "--workers=3", "--timeout=120"] 
+# Use setup script instead of direct Gunicorn
+CMD ["./setup.sh"] 
