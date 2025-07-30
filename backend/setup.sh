@@ -13,21 +13,22 @@ echo "Database is ready!"
 echo "Running migrations..."
 python manage.py migrate
 
-# Create superuser if it doesn't exist
-echo "Checking for superuser..."
+# Create admin user if it doesn't exist
+echo "Checking for admin user..."
 python manage.py shell << EOF
 from accounts.models import User
-if not User.objects.filter(is_superuser=True).exists():
-    print("Creating superuser...")
-    User.objects.create_superuser(
+if not User.objects.filter(role='admin').exists():
+    print("Creating admin user...")
+    User.objects.create_user(
         username='admin',
         email='admin@emesa.com',
         password='admin123',
-        role='admin'
+        role='admin',
+        is_staff=True
     )
-    print("Superuser created successfully!")
+    print("Admin user created successfully!")
 else:
-    print("Superuser already exists.")
+    print("Admin user already exists.")
 EOF
 
 # Collect static files
