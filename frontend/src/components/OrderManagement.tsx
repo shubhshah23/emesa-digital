@@ -80,6 +80,28 @@ const OrderManagement = ({ orders, onOrderAction, currentUser, reloadOrders }: O
   const [pagination, setPagination] = useState<{ [tab: string]: number }>({});
   const [latestCounterOffers, setLatestCounterOffers] = useState<{ [orderId: number]: { sender: 'client' | 'admin'; amount: number; admin_notes?: string } }>({});
 
+  // Function to validate date is not in the past
+  const validateDateNotInPast = (dateString: string): boolean => {
+    if (!dateString) return true;
+    const selectedDate = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day for fair comparison
+    return selectedDate >= today;
+  };
+
+  // Function to handle date change with validation
+  const handleDateChange = (dateString: string, setter: (value: string) => void) => {
+    if (validateDateNotInPast(dateString)) {
+      setter(dateString);
+    } else {
+      toast({
+        title: "Invalid Date",
+        description: "Please select a date that is today or in the future.",
+        variant: "destructive"
+      });
+    }
+  };
+
   useEffect(() => {
     loadMachines();
     // Poll for orders and machines every 1 second
@@ -219,6 +241,18 @@ const OrderManagement = ({ orders, onOrderAction, currentUser, reloadOrders }: O
   const handleSubmit = async () => {
     if (!selectedOrder) return;
     
+    // Validate dates before submission
+    if (actionType === 'approve' && formData.expected_completion_date) {
+      if (!validateDateNotInPast(formData.expected_completion_date)) {
+        toast({
+          title: "Invalid Date",
+          description: "Expected completion date cannot be in the past.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+    
     setLoading(true);
     try {
       switch (actionType) {
@@ -287,6 +321,16 @@ const OrderManagement = ({ orders, onOrderAction, currentUser, reloadOrders }: O
         toast({ title: "Error", description: "Please select a machine.", variant: "destructive" });
         return;
       }
+      
+      // Validate production date
+      if (productionDate && !validateDateNotInPast(productionDate)) {
+        toast({
+          title: "Invalid Date",
+          description: "Production start date cannot be in the past.",
+          variant: "destructive"
+        });
+        return;
+      }
       // Assign machine if changed or not assigned
       if (!order.machine || order.machine !== productionMachineId) {
         await assignMachine(order.id, productionMachineId);
@@ -309,10 +353,12 @@ const OrderManagement = ({ orders, onOrderAction, currentUser, reloadOrders }: O
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="expected_completion_date">Expected Completion Date</Label>
+              <Label htmlFor="expected_completion_date">Expected Completion Date (Today or later)</Label>
               <Input
                 type="date"
-                onChange={(e) => setFormData({...formData, expected_completion_date: e.target.value})}
+                min={new Date().toISOString().split('T')[0]}
+                value={formData.expected_completion_date || ''}
+                onChange={(e) => handleDateChange(e.target.value, (value) => setFormData({...formData, expected_completion_date: value}))}
               />
             </div>
             <div>
@@ -837,12 +883,13 @@ const OrderManagement = ({ orders, onOrderAction, currentUser, reloadOrders }: O
               </select>
             </div>
             <div>
-              <Label htmlFor="production_date">Production Start Date</Label>
+              <Label htmlFor="production_date">Production Start Date (Today or later)</Label>
               <Input
                 id="production_date"
                 type="date"
+                min={new Date().toISOString().split('T')[0]}
                 value={productionDate}
-                onChange={e => setProductionDate(e.target.value)}
+                onChange={e => handleDateChange(e.target.value, setProductionDate)}
               />
             </div>
             <div className="flex justify-end gap-2 mt-4">
