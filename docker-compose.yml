@@ -7,7 +7,7 @@ services:
     environment:
       - VITE_API_URL=/api/
     volumes:
-      - ./frontend/dist:/app/dist  # Bind mount instead of named volume
+      - emesa_frontend_dist:/app/dist
     depends_on:
       - backend
     networks:
@@ -53,7 +53,7 @@ services:
     volumes:
       - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./backend/media:/app/media
-      - ./frontend/dist:/usr/share/nginx/html  # Bind mount instead of named volume
+      - emesa_frontend_dist:/usr/share/nginx/html
     ports:
       - "8080:80"
     depends_on:
@@ -68,4 +68,4 @@ networks:
 
 volumes:
   db_data:
-  # Removed emesa_frontend_dist volume - using bind mounts instead 
+  emesa_frontend_dist: 
