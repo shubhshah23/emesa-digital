@@ -59,6 +59,17 @@ const ComponentRequirementsForm = ({ user, onNavigateToHistory }: ComponentRequi
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Check file size (2.5MB = 2.5 * 1024 * 1024 bytes)
+      const maxSize = 2.5 * 1024 * 1024; // 2.5MB in bytes
+      if (file.size > maxSize) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload a file smaller than 2.5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       if (file.name.toLowerCase().endsWith('.step') || file.name.toLowerCase().endsWith('.stp')) {
         setFormData({ ...formData, stepFile: file });
         toast({
@@ -78,6 +89,17 @@ const ComponentRequirementsForm = ({ user, onNavigateToHistory }: ComponentRequi
   const handleD2DraftUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Check file size (2.5MB = 2.5 * 1024 * 1024 bytes)
+      const maxSize = 2.5 * 1024 * 1024; // 2.5MB in bytes
+      if (file.size > maxSize) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload a file smaller than 2.5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       if (file.type === "application/pdf") {
         setFormData({ ...formData, d2DraftDesign: file });
         toast({
@@ -119,6 +141,32 @@ const ComponentRequirementsForm = ({ user, onNavigateToHistory }: ComponentRequi
       });
       return;
     }
+    if (!formData.targetPrice) {
+      toast({
+        title: "Missing Target Price",
+        description: "Please enter your target price.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (parseFloat(formData.targetPrice) <= 0) {
+      toast({
+        title: "Invalid Target Price",
+        description: "Please enter a positive target price.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Validate quantity if provided
+    if (formData.quantity && (!/^\d+$/.test(formData.quantity) || parseInt(formData.quantity) <= 0)) {
+      toast({
+        title: "Invalid Quantity",
+        description: "Please enter a valid positive integer for quantity.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -133,9 +181,7 @@ const ComponentRequirementsForm = ({ user, onNavigateToHistory }: ComponentRequi
       backendForm.append("material_grade", formData.materialGrade);
       backendForm.append("surface_treatment", formData.surfaceTreatment);
       backendForm.append("packing_standard", formData.packingStandard);
-      if (formData.targetPrice) {
-        backendForm.append("target_price", formData.targetPrice);
-      }
+      backendForm.append("target_price", formData.targetPrice);
       // Add any additional fields as needed
       await createOrder(backendForm);
       setStep(3);
@@ -227,28 +273,43 @@ const ComponentRequirementsForm = ({ user, onNavigateToHistory }: ComponentRequi
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity</Label>
-                  <Input
-                    id="quantity"
-                    type="number"
-                    placeholder="1"
-                    value={formData.quantity}
-                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="target-price">Target Price (optional)</Label>
-                  <Input
-                    id="target-price"
-                    type="number"
-                    placeholder="Enter your target price"
-                    value={formData.targetPrice}
-                    onChange={(e) => setFormData({ ...formData, targetPrice: e.target.value })}
-                    min={0}
-                    step={0.01}
-                  />
-                </div>
+                                 <div className="space-y-2">
+                   <Label htmlFor="quantity">Quantity</Label>
+                   <Input
+                     id="quantity"
+                     type="number"
+                     placeholder="1"
+                     value={formData.quantity}
+                     onChange={(e) => {
+                       const value = e.target.value;
+                       // Only allow positive integers
+                       if (value === '' || (/^\d+$/.test(value) && parseInt(value) > 0)) {
+                         setFormData({ ...formData, quantity: value });
+                       }
+                     }}
+                     min={1}
+                     step={1}
+                   />
+                 </div>
+                                 <div className="space-y-2">
+                   <Label htmlFor="target-price">Target Price *</Label>
+                                       <Input
+                      id="target-price"
+                      type="number"
+                      placeholder="Enter your target price"
+                      value={formData.targetPrice}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Only allow positive floating point numbers
+                        if (value === '' || (/^\d*\.?\d*$/.test(value) && parseFloat(value) > 0)) {
+                          setFormData({ ...formData, targetPrice: value });
+                        }
+                      }}
+                      min={0.01}
+                      step={0.01}
+                      required
+                    />
+                 </div>
               </div>
 
               <div className="space-y-2">
@@ -369,9 +430,9 @@ const ComponentRequirementsForm = ({ user, onNavigateToHistory }: ComponentRequi
                           className="hidden"
                         />
                       </div>
-                      <p className="text-xs text-gray-600">
-                        Accepts PDF files up to 50MB
-                      </p>
+                                             <p className="text-xs text-gray-600">
+                         Accepts PDF files up to 2.5MB
+                       </p>
                     </div>
                   )}
                 </div>
@@ -406,9 +467,9 @@ const ComponentRequirementsForm = ({ user, onNavigateToHistory }: ComponentRequi
                           className="hidden"
                         />
                       </div>
-                      <p className="text-xs text-gray-600">
-                        Accepts .step and .stp files up to 50MB
-                      </p>
+                                             <p className="text-xs text-gray-600">
+                         Accepts .step and .stp files up to 2.5MB
+                       </p>
                       <ul className="text-xs text-gray-500 text-left list-disc pl-4">
                         <li>• STEP format (.step or .stp)</li>
                       </ul>
