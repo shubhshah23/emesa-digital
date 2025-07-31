@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Factory, Search, Wrench, MapPin, DollarSign, Plus, Edit, Trash2 } from "lucide-react";
+import { Factory, Search, Wrench, MapPin, DollarSign, Plus, Edit } from "lucide-react";
 import { getSuppliers, createSupplier, updateSupplier, getMachines, createMachine } from "../lib/api";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -23,8 +23,6 @@ const AdminSupplierManagement = () => {
   // Modal state
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<any | null>(null);
-  const [showDeleteSupplierModal, setShowDeleteSupplierModal] = useState(false);
-  const [supplierToDelete, setSupplierToDelete] = useState<any | null>(null);
   const [supplierForm, setSupplierForm] = useState({ name: "", email: "", contact_info: "", phone: "", address: "" });
   const [savingSupplier, setSavingSupplier] = useState(false);
   // Remove expand/collapse state and logic
@@ -216,7 +214,7 @@ const AdminSupplierManagement = () => {
                     <Plus className="h-4 w-4" /> Add Machine
                   </button>
                   <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200" onClick={() => { setEditingSupplier(supplier); setShowSupplierModal(true); }}><Edit className="h-4 w-4 text-gray-700" /></button>
-                  <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200" onClick={() => { setSupplierToDelete(supplier); setShowDeleteSupplierModal(true); }}><Trash2 className="h-4 w-4 text-red-600" /></button>
+
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
