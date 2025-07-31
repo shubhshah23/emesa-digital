@@ -32,17 +32,16 @@ Emesa is a full-stack manufacturing platform for custom component orders, featur
 ### **Core Features**
 - **🔐 Secure Authentication** - JWT-based auth with role-based access
 - **📋 Order Management** - Complete order lifecycle from submission to completion
-- **💬 Real-time Negotiation** - Built-in chat system for price negotiation
+- **💳 Real-time Negotiation** - Built-in system for price negotiation through counter offers
 - **🏭 Machine Management** - Admin control over production capacity
 - **👥 Supplier Management** - Multi-supplier support with capabilities tracking
 - **📊 Admin Dashboard** - Comprehensive analytics and control panel
 - **📁 File Management** - STEP file upload and version control
-- **💳 Payment Integration** - Simulated payment processing workflow
+- **💳 Future Payment Integration** - Simulated payment processing workflow
 
 ### **User Roles**
 - **Client** - Submit orders, negotiate prices, track progress
 - **Admin** - Manage orders, suppliers, machines, and system operations
-- **Supplier** - View assigned orders and production requirements
 
 ---
 
@@ -718,14 +717,6 @@ tar -czf media_backup.tar.gz backend/media/
 # Full system backup
 docker-compose exec backend python manage.py dumpdata > full_backup.json
 ```
-
-### **Performance Monitoring**
-- **Response Time Tracking** - API endpoint performance
-- **Error Rate Monitoring** - 4xx/5xx error tracking
-- **Database Query Analysis** - Slow query identification
-- **Resource Utilization** - CPU, memory, disk usage
-- **User Activity Metrics** - Order volume, user engagement
-
 ---
 
 ## 📞 **Support & Contact**
@@ -733,28 +724,7 @@ docker-compose exec backend python manage.py dumpdata > full_backup.json
 ### **Technical Support**
 - **Email**: support@emesa.com
 - **Documentation**: https://docs.emesa.com
-- **Issue Tracking**: https://github.com/your-org/emesa/issues
-
-### **Emergency Contacts**
-- **System Administrator**: admin@emesa.com
-- **Database Administrator**: dba@emesa.com
-- **DevOps Team**: devops@emesa.com
-
-### **Service Level Agreement**
-- **Uptime**: 99.9% availability
-- **Response Time**: 4 hours for critical issues
-- **Resolution Time**: 24 hours for high priority issues
-
 ---
 
-## 📄 **License & Legal**
-
-- **License**: Proprietary - All rights reserved
-- **Copyright**: © 2024 Emesa Manufacturing
-- **Terms of Service**: https://emesa.com/terms
-- **Privacy Policy**: https://emesa.com/privacy
-
----
-
-*Last updated: January 2024*
+*Last updated: July 2025*
 *Version: 1.0.0* 
